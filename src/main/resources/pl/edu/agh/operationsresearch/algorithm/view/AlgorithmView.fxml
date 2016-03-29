@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField?>
+
+<?import javafx.scene.control.Button?>
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" prefWidth="250" prefHeight="90"
+            fx:controller="pl.edu.agh.operationsresearch.algorithm.controller.AlgorithmController">
+
+    <VBox spacing="15">
+        <padding>
+            <Insets top="10" left="10" right="10"/>
+        </padding>
+
+        <HBox>
+            <GridPane>
+                <Label minWidth="120" text="Number of ants:" GridPane.columnIndex="0"/>
+                <ValidatedTextField fx:id="antsTextField" minWidth="130" GridPane.columnIndex="1"/>
+            </GridPane>
+        </HBox>
+
+        <HBox>
+            <GridPane>
+                <Label minWidth="120" text="Evaporation rate:" GridPane.columnIndex="0"/>
+                <ValidatedTextField fx:id="evaporationTextField" minWidth="130" GridPane.columnIndex="1"/>
+            </GridPane>
+        </HBox>
+
+        <Button text="Start!" minWidth="75" onAction="#startAlgorithm"/>
+    </VBox>
+</BorderPane>
