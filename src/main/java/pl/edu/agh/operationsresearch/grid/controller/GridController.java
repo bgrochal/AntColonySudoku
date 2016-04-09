@@ -11,26 +11,26 @@ import java.util.ResourceBundle;
 
 public class GridController implements Initializable {
 
-	private static final int GRID_SIZE = 9;
+    private static final int GRID_SIZE = 9;
 
-	@FXML
-	private GridPane sudokuGridPane;
+    @FXML
+    private GridPane sudokuGridPane;
 
-	private GridCell[][] sudokuGrid;
+    private GridCell[][] sudokuGrid;
 
-	public void initialize(URL location, ResourceBundle resources) {
-		sudokuGrid = new GridCell[GRID_SIZE][GRID_SIZE];
+    public void initialize(URL location, ResourceBundle resources) {
+        sudokuGrid = new GridCell[GRID_SIZE][GRID_SIZE];
 
-		for (int i = 0; i < GRID_SIZE; i++) {
-			for (int j = 0; j < GRID_SIZE; j++) {
-				sudokuGrid[i][j] = new GridCell();
-				sudokuGridPane.add(sudokuGrid[i][j], i, j);
-			}
-		}
-	}
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                sudokuGrid[i][j] = new GridCell();
+                sudokuGridPane.add(sudokuGrid[i][j], i, j);
+            }
+        }
+    }
 
-	public GridCell[][] getSudokuGrid() {
-		return sudokuGrid;
-	}
+    public GridCell[][] getSudokuGrid() {
+        return sudokuGrid;
+    }
 
 }

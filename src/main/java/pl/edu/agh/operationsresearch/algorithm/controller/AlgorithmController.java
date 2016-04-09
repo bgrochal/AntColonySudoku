@@ -8,62 +8,62 @@ import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
 public class AlgorithmController {
 
-	@FXML
-	private ValidatedTextField antsTextField;
+    @FXML
+    private ValidatedTextField antsTextField;
 
-	@FXML
-	private ValidatedTextField evaporationTextField;
+    @FXML
+    private ValidatedTextField evaporationTextField;
 
-	// TODO: Add parameters if needed.
+    // TODO: Add parameters if needed.
 
-	@FXML
-	private void startAlgorithm(ActionEvent actionEvent) {
-		int antsNumber = 0;
-		double evaporationRate = 0;
-		boolean valid = true;
+    @FXML
+    private void startAlgorithm(ActionEvent actionEvent) {
+        int antsNumber = 0;
+        double evaporationRate = 0;
+        boolean valid = true;
 
-		try {
-			antsNumber = getAntsNumber();
-			evaporationRate = getEvaporationRate();
-		} catch (InvalidTextFieldException e) {
-			valid = false;
-		}
+        try {
+            antsNumber = getAntsNumber();
+            evaporationRate = getEvaporationRate();
+        } catch (InvalidTextFieldException e) {
+            valid = false;
+        }
 
-		if (valid) {
-			new AlgorithmCore(evaporationRate, antsNumber);
-		}
-	}
+        if (valid) {
+            new AlgorithmCore(evaporationRate, antsNumber);
+        }
+    }
 
-	private int getAntsNumber() throws InvalidTextFieldException {
-		int antsNumber;
+    private int getAntsNumber() throws InvalidTextFieldException {
+        int antsNumber;
 
-		try {
-			antsNumber = Integer.parseInt(antsTextField.getText());
-		} catch (NumberFormatException e) {
-			throw new InvalidTextFieldException(antsTextField);
-		}
+        try {
+            antsNumber = Integer.parseInt(antsTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidTextFieldException(antsTextField);
+        }
 
-		if (antsNumber <= 0) {
-			throw new InvalidTextFieldException(antsTextField);
-		}
+        if (antsNumber <= 0) {
+            throw new InvalidTextFieldException(antsTextField);
+        }
 
-		return antsNumber;
-	}
+        return antsNumber;
+    }
 
-	private double getEvaporationRate() throws InvalidTextFieldException {
-		double evaporationRate;
+    private double getEvaporationRate() throws InvalidTextFieldException {
+        double evaporationRate;
 
-		try {
-			evaporationRate = Double
-					.parseDouble(evaporationTextField.getText());
-		} catch (NumberFormatException e) {
-			throw new InvalidTextFieldException(evaporationTextField);
-		}
-		if (!(evaporationRate > 0 && evaporationRate < 1)) {
-			throw new InvalidTextFieldException(evaporationTextField);
-		}
+        try {
+            evaporationRate = Double
+                    .parseDouble(evaporationTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidTextFieldException(evaporationTextField);
+        }
+        if (!(evaporationRate > 0 && evaporationRate < 1)) {
+            throw new InvalidTextFieldException(evaporationTextField);
+        }
 
-		return evaporationRate;
-	}
+        return evaporationRate;
+    }
 
 }
