@@ -3,6 +3,8 @@ package pl.edu.agh.operationsresearch.algorithm.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import pl.edu.agh.operationsresearch.algorithm.model.AlgorithmCore;
+import pl.edu.agh.operationsresearch.grid.controller.GridController;
+import pl.edu.agh.operationsresearch.utils.view.AlertDialog;
 import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
 import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
@@ -13,8 +15,6 @@ public class AlgorithmController {
 
     @FXML
     private ValidatedTextField evaporationTextField;
-
-    // TODO: Add parameters if needed.
 
     @FXML
     private void startAlgorithm(ActionEvent actionEvent) {
@@ -30,7 +30,11 @@ public class AlgorithmController {
         }
 
         if (valid) {
-            new AlgorithmCore(evaporationRate, antsNumber);
+            if(GridController.getInstance().isValid()){
+                new AlgorithmCore(evaporationRate, antsNumber);
+            } else {
+                new AlertDialog("Error", "Invalid setup", "Entered sudoku setup is invalid.");
+            }
         }
     }
 

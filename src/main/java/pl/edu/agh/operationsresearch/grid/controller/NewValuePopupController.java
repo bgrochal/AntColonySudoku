@@ -61,6 +61,7 @@ public class NewValuePopupController {
 
     public void setCurrentGridCell(GridCell currentGridCell) {
         this.currentGridCell = currentGridCell;
+        textField.setText(Integer.toString(currentGridCell.getValue()));
     }
 
 }

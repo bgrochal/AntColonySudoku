@@ -1,5 +1,7 @@
 package pl.edu.agh.operationsresearch.algorithm.model;
 
+import pl.edu.agh.operationsresearch.grid.controller.GridController;
+
 public class AlgorithmCore {
     private static final int GRID_SIZE = 9;
     private static final int NUMBERS = 10;
@@ -39,6 +41,7 @@ public class AlgorithmCore {
 
                 // TODO how can I achieve sudokuGrid from GridController from
                 // here?
+                // GridController.getInstance()
             }
         }
     }
