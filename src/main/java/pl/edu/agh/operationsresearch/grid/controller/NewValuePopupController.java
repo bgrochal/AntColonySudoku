@@ -4,54 +4,63 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import pl.edu.agh.operationsresearch.grid.model.GridCell;
+import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
 import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
 public class NewValuePopupController {
 
-    @FXML
-    private ValidatedTextField newValueTextField;
+	@FXML
+	private ValidatedTextField textField;
 
-    private GridCell currentGridCell;
-    private Stage popupStage;
+	private GridCell currentGridCell;
+	private Stage popupStage;
 
+	@FXML
+	private void handleOKButtonClick(ActionEvent actionEvent) {
+		int value = 0;
+		boolean valid = true;
 
-    @FXML
-    private void handleOKButtonClick(ActionEvent actionEvent) {
-        int newValue;
+		if (textField.getText().trim().length() != 0) {
+			try {
+				value = getNewValue();
+			} catch (InvalidTextFieldException e) {
+				valid = false;
+			}
+		}
 
-        if(newValueTextField.getText().trim().length() == 0) {
-            currentGridCell.setValue(0);
-            popupStage.close();
-        }
+		if (valid) {
+			currentGridCell.setValue(value);
+			popupStage.close();
+		}
+	}
 
-        try {
-            newValue = Integer.parseInt(newValueTextField.getText().trim());
-            if(!(newValue > 0 && newValue < 10)) {
-                throw new NumberFormatException();
-            }
-        } catch(NumberFormatException exc) {
-            newValueTextField.setStyle("-fx-background-color: red;");
-            newValue = 0;
-        }
+	@FXML
+	private void handleCancelButtonClick(ActionEvent actionEvent) {
+		popupStage.close();
+	}
 
-        if(newValue != 0) {
-            currentGridCell.setValue(newValue);
-            popupStage.close();
-        }
-    }
+	private int getNewValue() throws InvalidTextFieldException {
+		int value;
 
-    @FXML
-    private void handleCancelButtonClick(ActionEvent actionEvent) {
-        popupStage.close();
-    }
+		try {
+			value = Integer.parseInt(textField.getText());
+		} catch (NumberFormatException e) {
+			throw new InvalidTextFieldException(textField);
+		}
 
+		if (!(value > 0 && value < 10)) {
+			throw new InvalidTextFieldException(textField);
+		}
 
-    public void setPopupStage(Stage popupStage) {
-        this.popupStage = popupStage;
-    }
+		return value;
+	}
 
-    public void setCurrentGridCell(GridCell currentGridCell) {
-        this.currentGridCell = currentGridCell;
-    }
+	public void setPopupStage(Stage popupStage) {
+		this.popupStage = popupStage;
+	}
+
+	public void setCurrentGridCell(GridCell currentGridCell) {
+		this.currentGridCell = currentGridCell;
+	}
 
 }
