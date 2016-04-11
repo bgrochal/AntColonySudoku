@@ -269,7 +269,13 @@ public class AlgorithmCore {
     }
 
     private boolean isDigitSelectedInSubgrid(int subgridNumberRow, int subgridNumberColumn, int digit, GridCell[][] matrix) {
-
+        for(int i=subgridNumberRow*3; i<(subgridNumberRow+1)*3; i++) {
+            for(int j=subgridNumberColumn*3; j<(subgridNumberColumn+1)*3; j++) {
+                if(matrix[i][j].getValue() == digit) {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
