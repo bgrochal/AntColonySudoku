@@ -31,7 +31,7 @@ public class AlgorithmController {
 
         if (valid) {
             if(GridController.getInstance().isValid()){
-                new AlgorithmCore(evaporationRate, antsNumber);
+                new AlgorithmCore(evaporationRate, antsNumber).start();
             } else {
                 new AlertDialog("Error", "Invalid setup", "Entered sudoku setup is invalid.");
             }

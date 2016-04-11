@@ -16,7 +16,11 @@ public class AlgorithmCore {
     private int globalMaxSelected;
 
     // indicates pheromone value on position (i, j) with number k
-    private double pheromoneValue[][][];
+    private double[][][] pheromoneValue;
+
+    private boolean[][] isDigitSelectedInColumn;
+    private boolean[][] isDigitSelectedInRow;
+
 
     public AlgorithmCore(double evaporationRate, int antsNumber) {
         this.evaporationRate = evaporationRate;
@@ -31,6 +35,14 @@ public class AlgorithmCore {
     private void initialize() {
         initializePheromones();
         globalMaxSelected = 0;
+
+        isDigitSelectedInColumn = new boolean[GRID_SIZE][NUMBERS];
+        isDigitSelectedInRow = new boolean[GRID_SIZE][NUMBERS];
+
+        for(int i=0; i<GRID_SIZE; i++) {
+            Arrays.fill(isDigitSelectedInColumn[i], false);
+            Arrays.fill(isDigitSelectedInRow[i], false);
+        }
     }
 
     private void cycleLoop() {
@@ -54,8 +66,9 @@ public class AlgorithmCore {
                 currentlySelected = 0;
                 canSelect = true;
 
+                // Caution! Variable canSelect is always true now, so algorithm is working infinitely.
                 while(canSelect) {
-
+                    currentlySelected = markSelectedPositions(resultMatrix);
                 }
             }
         }
@@ -77,6 +90,24 @@ public class AlgorithmCore {
         for(int i=0; i<GRID_SIZE; i++) {
             destination[i] = Arrays.copyOf(source[i], source[i].length);
         }
+    }
+
+    private int markSelectedPositions(GridCell[][] matrix) {
+        int selected = 0;
+
+        for(int i=0; i<GRID_SIZE; i++) {
+            for(int j=0; j<GRID_SIZE; j++) {
+                if(matrix[i][j].getValue() != 0) {
+                    int insertedValue = matrix[i][j].getValue();
+                    isDigitSelectedInRow[i][insertedValue] = true;
+                    isDigitSelectedInColumn[j][insertedValue] = true;
+
+                    selected++;
+                }
+            }
+        }
+
+        return selected;
     }
 
 }
