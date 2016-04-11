@@ -4,38 +4,32 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import pl.edu.agh.operationsresearch.grid.model.GridCell;
+import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
 import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
 public class NewValuePopupController {
 
     @FXML
-    private ValidatedTextField newValueTextField;
+    private ValidatedTextField textField;
 
     private GridCell currentGridCell;
     private Stage popupStage;
 
-
     @FXML
     private void handleOKButtonClick(ActionEvent actionEvent) {
-        int newValue;
+        int value = 0;
+        boolean valid = true;
 
-        if(newValueTextField.getText().trim().length() == 0) {
-            currentGridCell.setValue(0);
-            popupStage.close();
-        }
-
-        try {
-            newValue = Integer.parseInt(newValueTextField.getText().trim());
-            if(!(newValue > 0 && newValue < 10)) {
-                throw new NumberFormatException();
+        if (textField.getText().trim().length() != 0) {
+            try {
+                value = getNewValue();
+            } catch (InvalidTextFieldException e) {
+                valid = false;
             }
-        } catch(NumberFormatException exc) {
-            newValueTextField.setStyle("-fx-background-color: red;");
-            newValue = 0;
         }
 
-        if(newValue != 0) {
-            currentGridCell.setValue(newValue);
+        if (valid) {
+            currentGridCell.setValue(value);
             popupStage.close();
         }
     }
@@ -45,6 +39,21 @@ public class NewValuePopupController {
         popupStage.close();
     }
 
+    private int getNewValue() throws InvalidTextFieldException {
+        int value;
+
+        try {
+            value = Integer.parseInt(textField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidTextFieldException(textField);
+        }
+
+        if (!(value > 0 && value < 10)) {
+            throw new InvalidTextFieldException(textField);
+        }
+
+        return value;
+    }
 
     public void setPopupStage(Stage popupStage) {
         this.popupStage = popupStage;
@@ -52,6 +61,7 @@ public class NewValuePopupController {
 
     public void setCurrentGridCell(GridCell currentGridCell) {
         this.currentGridCell = currentGridCell;
+        textField.setText(Integer.toString(currentGridCell.getValue()));
     }
 
 }

@@ -21,6 +21,7 @@ public class GridCell extends StackPane {
 
 
     public GridCell() {
+        value = 0;
         textValue = new Text("");
         textValue.setStyle("-fx-font-size: 20px;");
 

@@ -16,7 +16,7 @@
         <HBox>
             <GridPane>
                 <Label minWidth="70" text="Cell value:" GridPane.columnIndex="0"/>
-                <ValidatedTextField fx:id="newValueTextField" minWidth="160" GridPane.columnIndex="1"/>
+                <ValidatedTextField fx:id="textField" minWidth="160" GridPane.columnIndex="1"/>
             </GridPane>
         </HBox>
         <HBox spacing="10">

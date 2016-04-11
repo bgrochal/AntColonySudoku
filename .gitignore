@@ -1,5 +1,8 @@
 # InteliiJ stuff
 .idea
+.project
+.classpath
+.settings
 
 target/
 
