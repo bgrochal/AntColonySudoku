@@ -1,6 +1,9 @@
 package pl.edu.agh.operationsresearch.algorithm.model;
 
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
+import pl.edu.agh.operationsresearch.grid.model.GridCell;
+
+import java.util.Arrays;
 
 public class AlgorithmCore {
     private static final int GRID_SIZE = 9;
@@ -31,17 +34,29 @@ public class AlgorithmCore {
     }
 
     private void cycleLoop() {
+        GridCell[][] resultMatrix = GridController.getInstance().getSudokuGrid();
+        GridCell[][] workMatrix = new GridCell[GRID_SIZE][GRID_SIZE];
+
+        int currentlySelected;
         int maxSelected;
+
+        boolean canSelect;
+
 
         for (int cycle = 0; cycle < CYCLES_NUMBER; cycle++) {
             maxSelected = 0;
 
             for (int ant = 0; ant < antsNumber; ant++) {
-                // TODO should ant be a class?
+                // TODO should ant be a class? Answer: Probably no.
+                // TODO how can I achieve sudokuGrid from GridController from here? Answer: GridController.getInstance()
 
-                // TODO how can I achieve sudokuGrid from GridController from
-                // here?
-                // GridController.getInstance()
+                rewriteSudokuGrid(resultMatrix, workMatrix);
+                currentlySelected = 0;
+                canSelect = true;
+
+                while(canSelect) {
+
+                }
             }
         }
     }
@@ -57,4 +72,11 @@ public class AlgorithmCore {
             }
         }
     }
+
+    private void rewriteSudokuGrid(GridCell[][] source, GridCell[][] destination) {
+        for(int i=0; i<GRID_SIZE; i++) {
+            destination[i] = Arrays.copyOf(source[i], source[i].length);
+        }
+    }
+
 }

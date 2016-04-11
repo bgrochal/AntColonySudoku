@@ -58,8 +58,7 @@ public class AlgorithmController {
         double evaporationRate;
 
         try {
-            evaporationRate = Double
-                    .parseDouble(evaporationTextField.getText());
+            evaporationRate = Double.parseDouble(evaporationTextField.getText());
         } catch (NumberFormatException e) {
             throw new InvalidTextFieldException(evaporationTextField);
         }
