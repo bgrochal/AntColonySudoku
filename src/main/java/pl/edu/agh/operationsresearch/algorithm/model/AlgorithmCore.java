@@ -22,6 +22,7 @@ public class AlgorithmCore {
     private double[][][] pheromoneValue;
 
     private int[][][] availableSubGridPlaces;
+    private int[][] availableGridCellDigits;
 
     private boolean[][] isDigitSelectedInColumn;
     private boolean[][] isDigitSelectedInRow;
@@ -39,9 +40,14 @@ public class AlgorithmCore {
 
     private void initialize() {
         initializePheromones();
-        globalMaxSelected = 0;
+        initializeArrays();
 
+        globalMaxSelected = 0;
+    }
+
+    private void initializeArrays() {
         availableSubGridPlaces = new int[SUB_GRIDS][SUB_GRIDS][NUMBERS];
+        availableGridCellDigits = new int[GRID_SIZE][GRID_SIZE];
 
         for(int i=0; i<SUB_GRIDS; i++) {
             for(int j=0; j<SUB_GRIDS; j++) {
@@ -53,6 +59,8 @@ public class AlgorithmCore {
         isDigitSelectedInRow = new boolean[GRID_SIZE][NUMBERS];
 
         for(int i=0; i<GRID_SIZE; i++) {
+            Arrays.fill(availableGridCellDigits[i], 0);
+
             Arrays.fill(isDigitSelectedInColumn[i], false);
             Arrays.fill(isDigitSelectedInRow[i], false);
         }
@@ -89,7 +97,7 @@ public class AlgorithmCore {
                         canSelect = false;
                     }
 
-                    // ...
+                    currentlySelected = manageWholeGrid(currentlySelected, workMatrix);
                 }
             }
         }
@@ -175,8 +183,8 @@ public class AlgorithmCore {
         }
 
         for(int i=0; i<SUB_GRIDS; i++) {
-            for (int j = 0; j < SUB_GRIDS; j++) {
-                for (int digit = 1; digit < NUMBERS; digit++) {
+            for (int j=0; j<SUB_GRIDS; j++) {
+                for (int digit=1; digit<NUMBERS; digit++) {
 
                     if(availableSubGridPlaces[i][j][digit] == 1) {
                         for(int row=i*3; row<(i+1)*3; row++) {
@@ -201,6 +209,45 @@ public class AlgorithmCore {
         return selected;
     }
 
+    private int manageWholeGrid(int selected, GridCell[][] matrix) {
+        for(int i=0; i<GRID_SIZE; i++) {
+            for(int j=0; j<GRID_SIZE; j++) {
+                int possibleDigits = 0;
+
+                for(int digit=1; digit<NUMBERS; digit++) {
+                    if(isDigitSelectedInRow(i, digit, matrix) || isDigitSelectedInColumn(j, digit, matrix) || isDigitSelectedInSubgrid(i/3, j/3, digit, matrix)) {
+                        continue;
+                    }
+
+                    possibleDigits++;
+                }
+
+                availableGridCellDigits[i][j] = possibleDigits;
+            }
+        }
+
+        for(int i=0; i<GRID_SIZE; i++) {
+            for(int j=0; j<GRID_SIZE; j++) {
+                if(availableGridCellDigits[i][j] == 1) {
+                    for(int digit=1; digit<NUMBERS; digit++) {
+                        if(!isDigitSelectedInRow(i, digit, matrix) && !isDigitSelectedInColumn(j, digit, matrix) && !isDigitSelectedInSubgrid(i/3, j/3, digit, matrix)) {
+                            // TODO: As above, probably there should be a validation with some exception thrown:
+                            // if(matrix[row][column].getValue() != 0) {
+                            //     ...
+                            // }
+
+                            matrix[i][j].setValue(digit);
+                            selected++;
+                        }
+                    }
+
+                }
+            }
+        }
+        
+        return selected;
+    }
+
     private boolean isDigitSelectedInRow(int row, int digit, GridCell[][] matrix) {
         for(int i=0; i<GRID_SIZE; i++) {
             if(matrix[row][i].getValue() == digit) {
@@ -215,6 +262,18 @@ public class AlgorithmCore {
         for(int i=0; i<GRID_SIZE; i++) {
             if(matrix[i][column].getValue() == digit) {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isDigitSelectedInSubgrid(int subgridNumberRow, int subgridNumberColumn, int digit, GridCell[][] matrix) {
+        for(int i=subgridNumberRow*3; i<(subgridNumberRow+1)*3; i++) {
+            for(int j=subgridNumberColumn*3; j<(subgridNumberColumn+1)*3; j++) {
+                if(matrix[i][j].getValue() == digit) {
+                    return true;
+                }
             }
         }
 
