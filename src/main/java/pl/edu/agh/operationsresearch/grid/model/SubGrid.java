@@ -1,8 +1,12 @@
 package pl.edu.agh.operationsresearch.grid.model;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 
+/**
+ * 3x3 integer grid
+ * 0 <= row <= 2
+ * 0 <= col <= 2
+ */
 public class SubGrid extends AbstractGrid<Integer> {
 
     @Override
@@ -16,22 +20,22 @@ public class SubGrid extends AbstractGrid<Integer> {
     }
 
     @Override
-    public Collection<Integer> getRowValues(int index) {
-        return table.row( index ).values();
+    public Collection<Integer> getRowValues(int row) {
+        return table.row( row ).values();
     }
 
     @Override
-    public Collection<Integer> getColumnValues(int index) {
-        return table.column( index ).values();
+    public Collection<Integer> getColumnValues(int col) {
+        return table.column( col ).values();
     }
 
     @Override
     public boolean isValid() {
-        return valuesValid( table.values() );
+        return gridSequenceValidator.test( table.values() );
     }
 
     @Override
-    protected Supplier<Integer> initializeExpr() {
-        return () -> 0;
+    protected Integer getInitCellValue() {
+        return 0;
     }
 }

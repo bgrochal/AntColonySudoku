@@ -1,47 +1,38 @@
 package pl.edu.agh.operationsresearch.grid.model;
 
 import com.google.common.collect.ArrayTable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
-import java.util.function.Supplier;
 
+/**
+ * Abstract 3x3 grid with two implementations - SubGrid & MainGrid
+ */
 public abstract class AbstractGrid<T> {
 
-    public static final Iterable<Integer> TAB_KEYS = ImmutableList.copyOf( Arrays.asList( 0, 1, 2 ) );
+    protected final ArrayTable<Integer, Integer, T> table = ArrayTable.create(GridConstants.GRID_KEYS, GridConstants.GRID_KEYS);
+    protected final GridSequenceValidator gridSequenceValidator = new GridSequenceValidator();
 
-    protected final ArrayTable<Integer, Integer, T> table;
-
-    public abstract int getValue(int row, int col );
-    public abstract void setValue( int row, int col, int val );
+    public abstract int getValue(int row, int col);
+    public abstract void setValue( int row, int col, int val);
     public abstract Collection<Integer> getRowValues(int index );
     public abstract Collection<Integer> getColumnValues( int index );
     public abstract boolean isValid();
-    protected abstract Supplier<T> initializeExpr();
+    protected abstract T getInitCellValue();
 
     public AbstractGrid() {
-        this.table = ArrayTable.create(TAB_KEYS, TAB_KEYS);
         this.initialize();
     }
 
+    // Initialize grid cells with getInitCellValue()
     public void initialize() {
-        for( int row : TAB_KEYS) {
-            for( int col : TAB_KEYS) {
-                table.set( row, col, initializeExpr().get() );
+        for( int row : GridConstants.GRID_KEYS) {
+            for( int col : GridConstants.GRID_KEYS) {
+                table.set( row, col, getInitCellValue() );
             }
         }
     }
 
-    protected boolean valuesValid( Collection<Integer> values ) {
-        Set<Integer> numbers = Sets.newHashSet( MainGrid.NUMBERS_SET );
-        for( int value : values ) {
-            if( value != 0 && !numbers.remove( value ) ) {
-                return false;
-            }
-        }
-        return true;
+    public void rewrite(AbstractGrid<T> newGrid) {
+        table.putAll( newGrid.table );
     }
 }

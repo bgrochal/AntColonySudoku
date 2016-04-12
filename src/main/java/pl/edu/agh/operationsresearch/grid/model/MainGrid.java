@@ -1,45 +1,44 @@
 package pl.edu.agh.operationsresearch.grid.model;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+/**
+ * 9x9 integer grid that delegates operations to its subgrids
+ * 0 <= row <= 8
+ * 0 <= col <= 8
+ */
 public class MainGrid extends AbstractGrid<SubGrid> {
 
-    public static final List<Integer> NUMBERS_LIST = ImmutableList.copyOf( IntStream.range(1, 10).boxed().collect(Collectors.toList()) );
-    public static final Set<Integer> NUMBERS_SET = ImmutableSet.copyOf( NUMBERS_LIST );
-
+    // Find proper subgrid and delegate getValue to it
     @Override
     public int getValue(int row, int col) {
         return table.at( row/3, col/3 ).getValue( row%3, col%3 );
     }
 
+    // Find proper subgrid and delegate setValue to it
     @Override
     public void setValue(int row, int col, int val) {
         table.at( row/3, col/3 ).setValue( row%3, col%3, val);
     }
 
+    // Find subgrids and join their 3-digit rows to get full 9-digit row
     @Override
-    public Collection<Integer> getRowValues(int index) {
-        List<Integer> aggregatedRow = Lists.newArrayList();
-        table.row(index/3).values().stream().map( subGrid -> subGrid.getRowValues(index%3) ).forEach( aggregatedRow::addAll );
-        return aggregatedRow;
+    public Collection<Integer> getRowValues(int row) {
+        return table.row(row/3).values().stream()
+            .flatMap( subGrid -> subGrid.getRowValues(row%3).stream() )
+            .collect(Collectors.toList());
     }
 
+    // Find subgrids and join their 3-digit columns to get full 9-digit column
     @Override
-    public Collection<Integer> getColumnValues(int index) {
-        List<Integer> aggregatedCol = Lists.newArrayList();
-        table.column(index/3).values().stream().map( subGrid -> subGrid.getColumnValues(index%3) ).forEach( aggregatedCol::addAll );
-        return aggregatedCol;
+    public Collection<Integer> getColumnValues(int col) {
+        return table.column(col/3).values().stream()
+            .flatMap( subGrid -> subGrid.getColumnValues(col%3).stream() )
+            .collect(Collectors.toList());
     }
 
+    // First check if every subgrid is valid and then check every full row and column
     @Override
     public boolean isValid() {
         for( SubGrid subGrid : table.values() ) {
@@ -55,16 +54,22 @@ public class MainGrid extends AbstractGrid<SubGrid> {
         return true;
     }
 
-    public boolean isRowValid(int index) {
-        return valuesValid( getRowValues( index ) );
-    }
-
-    public boolean isColumnValid(int index) {
-        return valuesValid( getColumnValues( index ) );
-    }
-
     @Override
-    protected Supplier<SubGrid> initializeExpr() {
-        return SubGrid::new;
+    protected SubGrid getInitCellValue() {
+        return new SubGrid();
+    }
+
+    public boolean isRowValid(int row) {
+        return gridSequenceValidator.test( getRowValues( row ) );
+    }
+
+    public boolean isColumnValid(int col) {
+        return gridSequenceValidator.test( getColumnValues( col ) );
+    }
+
+    // 0 <= row < 2
+    // 0 <= col < 2
+    public SubGrid getSubgrid(int row, int col) {
+        return table.at(row, col);
     }
 }
