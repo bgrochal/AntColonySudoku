@@ -99,6 +99,7 @@ public class AlgorithmCore {
 
 
         for (int cycle = 0; cycle < CYCLES_NUMBER; cycle++) {
+            System.out.println("Cycle " + cycle + ".");
             maxSelected = 0;
 
             for (int ant = 0; ant < antsNumber; ant++) {
@@ -109,7 +110,6 @@ public class AlgorithmCore {
                 currentlySelected = 0;
                 canSelect = true;
 
-                // Caution! Variable canSelect is always true now, so algorithm is working infinitely.
                 while(canSelect) {
                     currentlySelected = markSelectedPositions(currentlySelected, resultMatrix);
 
@@ -127,8 +127,11 @@ public class AlgorithmCore {
                     double p = randomGenerator.nextDouble();
                     for(int i=0; i<GRID_SIZE; i++) {
                         for(int j=0; j<GRID_SIZE; j++) {
-                            double probabilitiesSum = 0;
+                            if(workMatrix[i][j].getValue() != 0) {
+                                continue;
+                            }
 
+                            double probabilitiesSum = 0;
                             for(int k=1; k<NUMBERS; k++) {
                                 probabilitiesSum += probability[i][j][k];
                                 if(probabilitiesSum > p) {
@@ -182,6 +185,8 @@ public class AlgorithmCore {
                 }
             }
         }
+
+        System.out.println("Finished.");
     }
 
     private void rewriteSudokuGrid(GridCell[][] source, GridCell[][] destination) {
@@ -218,6 +223,10 @@ public class AlgorithmCore {
                             if(matrix[row][column].getValue() == digit) {
                                 possiblePlaces = 0;
                                 break duplicateInSubGridBreak;
+                            }
+
+                            if(matrix[row][column].getValue() != 0) {
+                                continue;
                             }
 
                             if(isDigitSelectedInRow(row, digit, matrix) || isDigitSelectedInColumn(column, digit, matrix)) {
@@ -258,7 +267,7 @@ public class AlgorithmCore {
                     if(availableSubGridPlaces[i][j][digit] == 1) {
                         for(int row=i*3; row<(i+1)*3; row++) {
                             for(int column = j*3; column<(j+1)*3; column++) {
-                                if(!isDigitSelectedInRow(row, digit, matrix) && !isDigitSelectedInColumn(column, digit, matrix)) {
+                                if(matrix[row][column].getValue() == 0 && !isDigitSelectedInRow(row, digit, matrix) && !isDigitSelectedInColumn(column, digit, matrix)) {
                                     // TODO: Probably there should be a validation with some exception thrown:
                                     // if(matrix[row][column].getValue() != 0) {
                                     //     ...
@@ -300,7 +309,7 @@ public class AlgorithmCore {
             for(int j=0; j<GRID_SIZE; j++) {
                 if(availableGridCellDigits[i][j] == 1) {
                     for(int digit=1; digit<NUMBERS; digit++) {
-                        if(!isDigitSelectedInRow(i, digit, matrix) && !isDigitSelectedInColumn(j, digit, matrix) && !isDigitSelectedInSubgrid(i/3, j/3, digit, matrix)) {
+                        if(matrix[i][j].getValue() == 0 && !isDigitSelectedInRow(i, digit, matrix) && !isDigitSelectedInColumn(j, digit, matrix) && !isDigitSelectedInSubgrid(i/3, j/3, digit, matrix)) {
                             // TODO: As above, probably there should be a validation with some exception thrown:
                             // if(matrix[row][column].getValue() != 0) {
                             //     ...
@@ -324,7 +333,7 @@ public class AlgorithmCore {
         for(int i=0; i<GRID_SIZE; i++) {
             for(int j=0; j<GRID_SIZE; j++) {
                 for(int k=1; k<NUMBERS; k++) {
-                    weights[i][j][k] = pheromoneValue[i][j][k] * (10 - availableSubGridPlaces[i][j][k]) * (10 - availableGridCellDigits[i][j]);
+                    weights[i][j][k] = pheromoneValue[i][j][k] * (10 - availableSubGridPlaces[i/3][j/3][k]) * (10 - availableGridCellDigits[i/3][j/3]);
                     weightsSum += weights[i][j][k];
                 }
             }

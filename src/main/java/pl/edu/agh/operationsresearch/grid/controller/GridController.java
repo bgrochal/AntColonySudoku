@@ -50,9 +50,11 @@ public class GridController implements Initializable {
                 return false;
         }
 
-        for (int i = 0; i < 9; i++) {
-            if (!validateSquare(i % 3, (i / 3) * 3))
-                return false;
+        for (int i = 0; i < 9; i+=3) {
+            for (int j = 0; j < 9; j += 3) {
+                if (!validateSquare(i, j))
+                    return false;
+            }
         }
 
         return true;
