@@ -4,8 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import pl.edu.agh.operationsresearch.algorithm.model.AlgorithmCore;
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
-import pl.edu.agh.operationsresearch.grid.model.GridCell;
-import pl.edu.agh.operationsresearch.utils.view.AlertDialog;
+import pl.edu.agh.operationsresearch.grid.model.Grid;
 import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
 import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
@@ -16,10 +15,13 @@ public class AlgorithmController {
 
     @FXML
     private ValidatedTextField evaporationTextField;
+    
+    private GridController gridCtrl;
 
 
     @FXML
     private void loadTest(ActionEvent actionEvent) {
+        System.out.println(gridCtrl);
         initializeTestGrid();
         antsTextField.setText("100");
         evaporationTextField.setText("0.9");
@@ -39,12 +41,12 @@ public class AlgorithmController {
         }
 
         if (valid) {
-            if(GridController.getInstance().isValid()){
-                new AlgorithmCore(evaporationRate, antsNumber).start();
-            } else {
-                new AlertDialog("Error", "Invalid setup", "Entered sudoku setup is invalid.");
-            }
+            new AlgorithmCore(evaporationRate, antsNumber, gridCtrl);
         }
+    }
+    
+    public void setGridController(GridController ctrl){
+        gridCtrl = ctrl;
     }
 
 
@@ -83,12 +85,8 @@ public class AlgorithmController {
          {0, 0, 0, 0, 8, 0, 0, 7, 9}
          **/
 
-        GridCell[][] grid = GridController.getInstance().getSudokuGrid();
-        for(int i=0; i<9; i++) {
-            for(int j=0; j<9; j++) {
-                grid[i][j].setValue(testGrid[j][i]);
-            }
-        }
+        Grid grid = new Grid(testGrid);
+        gridCtrl.setGrid(grid);
     }
 
     private int getAntsNumber() throws InvalidTextFieldException {

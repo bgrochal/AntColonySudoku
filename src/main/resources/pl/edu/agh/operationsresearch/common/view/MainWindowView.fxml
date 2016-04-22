@@ -4,11 +4,11 @@
 
 <?import javafx.geometry.Insets?>
 
-<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" hgap="20">
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" hgap="20" fx:controller="pl.edu.agh.operationsresearch.common.AppController">
     <padding>
         <Insets top="20" left="30" right="30"/>
     </padding>
 
-    <fx:include source="../../grid/view/GridView.fxml" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-    <fx:include source="../../algorithm/view/AlgorithmView.fxml" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+    <fx:include fx:id="grid" source="../../grid/view/GridView.fxml" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <fx:include fx:id="algorithm" source="../../algorithm/view/AlgorithmView.fxml" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 </GridPane>

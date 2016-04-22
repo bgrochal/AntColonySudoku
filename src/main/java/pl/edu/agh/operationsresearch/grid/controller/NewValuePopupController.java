@@ -3,7 +3,6 @@ package pl.edu.agh.operationsresearch.grid.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
-import pl.edu.agh.operationsresearch.grid.model.GridCell;
 import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
 import pl.edu.agh.operationsresearch.utils.view.ValidatedTextField;
 
@@ -12,8 +11,11 @@ public class NewValuePopupController {
     @FXML
     private ValidatedTextField textField;
 
-    private GridCell currentGridCell;
+    private GridController ctrl;
     private Stage popupStage;
+    
+    private int row;
+    private int col;
 
     @FXML
     private void handleOKButtonClick(ActionEvent actionEvent) {
@@ -29,7 +31,7 @@ public class NewValuePopupController {
         }
 
         if (valid) {
-            currentGridCell.setValue(value);
+            ctrl.set(row, col, value);
             popupStage.close();
         }
     }
@@ -59,9 +61,11 @@ public class NewValuePopupController {
         this.popupStage = popupStage;
     }
 
-    public void setCurrentGridCell(GridCell currentGridCell) {
-        this.currentGridCell = currentGridCell;
-        textField.setText(Integer.toString(currentGridCell.getValue()));
+    public void setParameters(String value, GridController ctrl, int row, int col) {
+        textField.setText(value);
+        this.ctrl = ctrl;
+        this.row = row;
+        this.col = col;
     }
 
 }

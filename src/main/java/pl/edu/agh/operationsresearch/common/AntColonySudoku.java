@@ -1,12 +1,12 @@
 package pl.edu.agh.operationsresearch.common;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class AntColonySudoku extends Application {
 
@@ -22,7 +22,8 @@ public class AntColonySudoku extends Application {
     private void prepareWindow(Stage primaryStage) throws IOException {
         primaryStage.setTitle("Ant Colony Sudoku Solver");
 
-        Parent root = FXMLLoader.load(getClass().getResource("view/MainWindowView.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource(
+                "view/MainWindowView.fxml"));
         primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.show();
     }

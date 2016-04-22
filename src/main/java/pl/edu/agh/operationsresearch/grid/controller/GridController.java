@@ -1,127 +1,56 @@
 package pl.edu.agh.operationsresearch.grid.controller;
 
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.GridPane;
+import pl.edu.agh.operationsresearch.grid.model.Grid;
 import pl.edu.agh.operationsresearch.grid.model.GridCell;
 
 public class GridController implements Initializable {
-
-    private static final int GRID_SIZE = 9;
-
     @FXML
-    private GridPane sudokuGridPane;
+    private GridPane gridPane;
 
-    private GridCell[][] sudokuGrid;
+    private GridCell[][] gridCells;
     
-    private static GridController instance = null;
-    
-    public static GridController getInstance(){
-        return instance;
-    }
+    private Grid grid;
 
     public void initialize(URL location, ResourceBundle resources) {
-        sudokuGrid = new GridCell[GRID_SIZE][GRID_SIZE];
+        gridCells = new GridCell[Grid.GRID_SIZE][Grid.GRID_SIZE];
+        grid = new Grid();
 
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                sudokuGrid[i][j] = new GridCell();
-                sudokuGridPane.add(sudokuGrid[i][j], i, j);
+        for (int i = 0; i < Grid.GRID_SIZE; i++) {
+            for (int j = 0; j < Grid.GRID_SIZE; j++) {
+                gridCells[i][j] = new GridCell(this, i, j);
+                gridPane.add(gridCells[i][j], i, j);
             }
         }
-        
-        instance = this;
     }
-
-    public boolean isValid() {
-        
-        for (int i = 0; i < 9; i++) {
-            if (!validateRow(i))
-                return false;
-        }
-
-        for (int i = 0; i < 9; i++) {
-            if (!validateColumn(i))
-                return false;
-        }
-
-        for (int i = 0; i < 9; i+=3) {
-            for (int j = 0; j < 9; j += 3) {
-                if (!validateSquare(i, j))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    private boolean validateRow(int n) {
-        List<Integer> values = new LinkedList<Integer>();
-        int i, j, value;
-
-        j = n;
-
-        for (i = 0; i < GRID_SIZE; i++) {
-            value = sudokuGrid[i][j].getValue();
-
-            if (value != 0) {
-                if (values.contains(value))
-                    return false;
-                values.add(value);
-            }
-        }
-
-        return true;
-    }
-
-    private boolean validateColumn(int n) {
-        List<Integer> values = new LinkedList<Integer>();
-        int i, j, value;
-
-        i = n;
-
-        for (j = 0; j < GRID_SIZE; j++) {
-            value = sudokuGrid[i][j].getValue();
-
-            if (value != 0) {
-                if (values.contains(value))
-                    return false;
-                values.add(value);
-            }
-        }
-
-        return true;
-    }
-
-    private boolean validateSquare(int i, int j) {
-        int map[][] = { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 0, 1 }, { 1, 1 },
-                { 2, 1 }, { 0, 2 }, { 1, 2 }, { 2, 2 } };
-        int offset[];
-
-        List<Integer> values = new LinkedList<Integer>();
+    
+    public void setGrid(Grid grid){
         int value;
-
-        for (int k = 0; k < GRID_SIZE; k++) {
-            offset = map[k];
-            value = sudokuGrid[i + offset[0]][j + offset[1]].getValue();
-
-            if (value != 0) {
-                if (values.contains(value))
-                    return false;
-                values.add(value);
+        this.grid = grid;
+        
+        for (int i = 0; i < Grid.GRID_SIZE; i++) {
+            for (int j = 0; j < Grid.GRID_SIZE; j++) {
+                value = grid.get(i, j);
+                gridCells[i][j].setValue(value);
             }
         }
-
-        return true;
     }
-
-    public GridCell[][] getSudokuGrid() {
-        return sudokuGrid;
+    
+    public Grid getGrid(){
+        return grid;
     }
-
+    
+    public boolean set(int row, int col, int value){
+        if(grid.set(row, col, value)){
+            gridCells[row][col].setValue(value);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

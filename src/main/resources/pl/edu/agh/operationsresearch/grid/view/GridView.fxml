@@ -2,6 +2,6 @@
 
 <?import javafx.scene.layout.GridPane?>
 <GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="pl.edu.agh.operationsresearch.grid.controller.GridController" fx:id="sudokuGridPane"
+          fx:controller="pl.edu.agh.operationsresearch.grid.controller.GridController" fx:id="gridPane"
           hgap="1" vgap="1" gridLinesVisible="true"
 />
