@@ -21,10 +21,10 @@ public class GridController implements Initializable {
         gridCells = new GridCell[Grid.GRID_SIZE][Grid.GRID_SIZE];
         grid = new Grid();
 
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                gridCells[i][j] = new GridCell(this, i, j);
-                gridPane.add(gridCells[i][j], i, j);
+        for (int row = 0; row < Grid.GRID_SIZE; row++) {
+            for (int col = 0; col < Grid.GRID_SIZE; col++) {
+                gridCells[row][col] = new GridCell(this, row, col);
+                gridPane.add(gridCells[row][col], col, row);
             }
         }
     }
@@ -33,10 +33,10 @@ public class GridController implements Initializable {
         int value;
         this.grid = grid;
         
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                value = grid.get(i, j);
-                gridCells[i][j].setValue(value);
+        for (int row = 0; row < Grid.GRID_SIZE; row++) {
+            for (int col = 0; col < Grid.GRID_SIZE; col++) {
+                value = grid.get(row, col);
+                gridCells[row][col].setValue(value);
             }
         }
     }
