@@ -28,7 +28,7 @@
             </GridPane>
         </HBox>
 
-        <Button text="Load test!" minWidth="75" onAction="#loadTest"/>
+        <Button text="Load!" minWidth="75" onAction="#loadTest"/>
         <Button text="Start!" minWidth="75" onAction="#startAlgorithm"/>
     </VBox>
 </BorderPane>

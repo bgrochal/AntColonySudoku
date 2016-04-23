@@ -1,8 +1,12 @@
 package pl.edu.agh.operationsresearch.algorithm.controller;
 
+import java.io.File;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.stage.FileChooser;
 import pl.edu.agh.operationsresearch.algorithm.model.AlgorithmCore;
+import pl.edu.agh.operationsresearch.common.GridLoader;
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
 import pl.edu.agh.operationsresearch.grid.model.Grid;
 import pl.edu.agh.operationsresearch.utils.view.InvalidTextFieldException;
@@ -21,10 +25,19 @@ public class AlgorithmController {
 
     @FXML
     private void loadTest(ActionEvent actionEvent) {
-        System.out.println(gridCtrl);
-        initializeTestGrid();
-        antsTextField.setText("100");
-        evaporationTextField.setText("0.9");
+        Grid grid = GridLoader.load(getFileName());
+        
+        if(grid != null){    
+            antsTextField.setText("100");
+            evaporationTextField.setText("0.9");
+            gridCtrl.setGrid(grid);
+        }
+    }
+    
+    private File getFileName(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Open File");
+        return chooser.showOpenDialog(antsTextField.getScene().getWindow());
     }
 
     @FXML
@@ -47,46 +60,6 @@ public class AlgorithmController {
     
     public void setGridController(GridController ctrl){
         gridCtrl = ctrl;
-    }
-
-
-    private void initializeTestGrid() {
-        int[][] testGrid = new int[][] {
-                {5, 3, 0, 0, 7, 0, 0, 0, 0},
-                {6, 0, 0, 1, 9, 5, 0, 0, 0},
-                {0, 9, 8, 0, 0, 0, 0, 6, 0},
-                {8, 0, 0, 0, 6, 0, 0, 0, 3},
-                {4, 0, 0, 8, 0, 3, 0, 0, 1},
-                {7, 0, 0, 0, 2, 0, 0, 0, 6},
-                {0, 6, 0, 0, 0, 0, 2, 8, 0},
-                {0, 0, 0, 4, 1, 9, 0, 0, 5},
-                {0, 0, 0, 0, 8, 0, 0, 7, 9}
-        };
-
-        /**
-         {5, 3, 4, 6, 7, 8, 9, 1, 2},
-         {6, 7, 2, 1, 9, 5, 3, 4, 8},
-         {1, 9, 8, 3, 4, 2, 5, 6, 7},
-         {8, 5, 9, 7, 6, 1, 4, 2, 3},
-         {4, 2, 6, 8, 5, 3, 7, 9, 1},
-         {7, 1, 3, 9, 2, 4, 8, 5, 6},
-         {9, 6, 1, 5, 3, 7, 2, 8, 4},
-         {2, 8, 7, 4, 1, 9, 6, 3, 5},
-         {3, 4, 5, 2, 8, 6, 1, 7, 9}
-
-         {5, 3, 0, 0, 7, 0, 0, 0, 0},
-         {6, 0, 0, 1, 9, 5, 0, 0, 0},
-         {0, 9, 8, 0, 0, 0, 0, 6, 0},
-         {8, 0, 0, 0, 6, 0, 0, 0, 3},
-         {4, 0, 0, 8, 0, 3, 0, 0, 1},
-         {7, 0, 0, 0, 2, 0, 0, 0, 6},
-         {0, 6, 0, 0, 0, 0, 2, 8, 0},
-         {0, 0, 0, 4, 1, 9, 0, 0, 5},
-         {0, 0, 0, 0, 8, 0, 0, 7, 9}
-         **/
-
-        Grid grid = new Grid(testGrid);
-        gridCtrl.setGrid(grid);
     }
 
     private int getAntsNumber() throws InvalidTextFieldException {
