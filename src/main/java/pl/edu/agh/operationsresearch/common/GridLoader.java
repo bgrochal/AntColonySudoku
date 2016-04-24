@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import pl.edu.agh.operationsresearch.grid.model.Grid;
+import pl.edu.agh.operationsresearch.grid.model.GridConstants;
 
 public class GridLoader {
     public static Grid load(File file) {
@@ -12,8 +13,8 @@ public class GridLoader {
         Scanner sc = null;
         int digit;
         int index = 0;
-        
-        if(file == null){
+
+        if (file == null) {
             return null;
         }
 
@@ -36,7 +37,7 @@ public class GridLoader {
             e.printStackTrace();
         }
 
-        if (index != Grid.GRID_SIZE * Grid.GRID_SIZE) {
+        if (index != GridConstants.GRID_SIZE * GridConstants.GRID_SIZE) {
             grid = null;
         }
 

@@ -22,29 +22,29 @@ public class GridCell extends StackPane implements EventHandler<MouseEvent> {
     private int row;
     private int col;
 
-
     public GridCell(GridController ctrl, int row, int col) {
         value = new Text("");
         value.setStyle("-fx-font-size: 20px;");
-        
+
         this.ctrl = ctrl;
         this.row = row;
         this.col = col;
 
         this.setOnMouseClicked(this);
-        this.getChildren().addAll(new Rectangle(50, 50, Color.valueOf("wheat")), value);
+        this.getChildren().addAll(
+                new Rectangle(50, 50, Color.valueOf("wheat")), value);
     }
 
-    public int getRow(){
+    public int getRow() {
         return row;
     }
-    
-    public int getCol(){
+
+    public int getCol() {
         return col;
     }
 
     public void setValue(int value) {
-        if(value == 0) {
+        if (value == 0) {
             this.value.setText("");
         } else {
             this.value.setText(String.valueOf(value));
@@ -52,7 +52,10 @@ public class GridCell extends StackPane implements EventHandler<MouseEvent> {
     }
 
     public void handle(MouseEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/pl/edu/agh/operationsresearch/grid/view/NewValuePopupView.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass()
+                        .getResource(
+                                "/pl/edu/agh/operationsresearch/grid/view/NewValuePopupView.fxml"));
         Stage popupStage = new Stage();
         Parent popupRoot = null;
 
@@ -62,7 +65,7 @@ public class GridCell extends StackPane implements EventHandler<MouseEvent> {
             exc.printStackTrace();
         }
 
-        if(popupRoot != null) {
+        if (popupRoot != null) {
             popupStage.setScene(new Scene(popupRoot));
         }
 

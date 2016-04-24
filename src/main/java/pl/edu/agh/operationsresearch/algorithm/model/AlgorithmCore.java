@@ -1,15 +1,13 @@
 package pl.edu.agh.operationsresearch.algorithm.model;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import pl.edu.agh.operationsresearch.algorithm.utils.CannotSelectException;
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
 import pl.edu.agh.operationsresearch.grid.model.Grid;
+import pl.edu.agh.operationsresearch.grid.model.GridConstants;
 
 public class AlgorithmCore {
-    private static final int SUB_GRIDS = 3;
-    private static final int NUMBERS = 10;
     private static final int PHEROMONES_MAX = 1000;
     private static final int CYCLES_NUMBER = 1000;
 
@@ -22,9 +20,6 @@ public class AlgorithmCore {
     private double[][][] pheromoneValue;
     private double[][][] probability;
     private double[][][] weights;
-
-    private int[][][] availableSubGridPlaces;
-    private int[][] availableGridCellDigits;
 
     private GridController gridCtrl;
     private Grid result;
@@ -47,11 +42,11 @@ public class AlgorithmCore {
     }
 
     private void initializePheromones() {
-        pheromoneValue = new double[Grid.GRID_SIZE][Grid.GRID_SIZE][NUMBERS];
+        pheromoneValue = new double[GridConstants.GRID_SIZE][GridConstants.GRID_SIZE][GridConstants.NUMBERS];
 
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                for (int k = 0; k < NUMBERS; k++) {
+        for (int i = 0; i < GridConstants.GRID_SIZE; i++) {
+            for (int j = 0; j < GridConstants.GRID_SIZE; j++) {
+                for (int k = 0; k < GridConstants.NUMBERS; k++) {
                     pheromoneValue[i][j][k] = PHEROMONES_MAX;
                 }
             }
@@ -59,17 +54,8 @@ public class AlgorithmCore {
     }
 
     private void initializeArrays() {
-        probability = new double[Grid.GRID_SIZE][Grid.GRID_SIZE][NUMBERS];
-        weights = new double[Grid.GRID_SIZE][Grid.GRID_SIZE][NUMBERS];
-
-        availableSubGridPlaces = new int[SUB_GRIDS][SUB_GRIDS][NUMBERS];
-        availableGridCellDigits = new int[Grid.GRID_SIZE][Grid.GRID_SIZE];
-
-        for (int i = 0; i < SUB_GRIDS; i++) {
-            for (int j = 0; j < SUB_GRIDS; j++) {
-                Arrays.fill(availableSubGridPlaces[i][j], 9);
-            }
-        }
+        probability = new double[GridConstants.GRID_SIZE][GridConstants.GRID_SIZE][GridConstants.NUMBERS];
+        weights = new double[GridConstants.GRID_SIZE][GridConstants.GRID_SIZE][GridConstants.NUMBERS];
     }
 
     private void singleCycle(Grid best) {
@@ -89,18 +75,18 @@ public class AlgorithmCore {
                 }
 
                 manageWholeGrid(tmp);
-                calculateProbability();
+                calculateProbability(tmp);
 
                 // TODO: Not sure if it is correct.
                 double p = randomGenerator.nextDouble();
-                for (int i = 0; i < Grid.GRID_SIZE; i++) {
-                    for (int j = 0; j < Grid.GRID_SIZE; j++) {
+                for (int i = 0; i < GridConstants.GRID_SIZE; i++) {
+                    for (int j = 0; j < GridConstants.GRID_SIZE; j++) {
                         if (tmp.isset(i, j)) {
                             continue;
                         }
 
                         double probabilitiesSum = 0;
-                        for (int k = 1; k < NUMBERS; k++) {
+                        for (int k = 1; k < GridConstants.NUMBERS; k++) {
                             probabilitiesSum += probability[i][j][k];
                             if (probabilitiesSum > p) {
                                 tmp.set(i, j, k);
@@ -136,10 +122,10 @@ public class AlgorithmCore {
     private void updatePheromones(Grid best) {
         double pheromoneLeft = best.selected() / 81;
 
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                if (best.isset(i, j)) {
-                    pheromoneValue[i][j][best.get(i, j)] += pheromoneLeft;
+        for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
+                if (best.isset(row, col)) {
+                    pheromoneValue[row][col][best.get(row, col)] += pheromoneLeft;
                 }
             }
         }
@@ -160,146 +146,43 @@ public class AlgorithmCore {
     }
 
     private void evaporatePheromones() {
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                for (int k = 1; k < NUMBERS; k++) {
-                    pheromoneValue[i][j][k] *= evaporationRate;
+        for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
+                for (int k = 1; k < GridConstants.NUMBERS; k++) {
+                    pheromoneValue[row][col][k] *= evaporationRate;
                 }
             }
         }
     }
 
     private void manageSubGrids(Grid matrix) throws CannotSelectException {
-        for (int i = 0; i < SUB_GRIDS; i++) {
-            for (int j = 0; j < SUB_GRIDS; j++) {
-                for (int digit = 1; digit < NUMBERS; digit++) {
-                    int possiblePlaces = 0;
+        matrix.calculatePossiblePlaces();
 
-                    duplicateInSubGridBreak: for (int row = i * 3; row < (i + 1) * 3; row++) {
-                        for (int column = j * 3; column < (j + 1) * 3; column++) {
-                            if (matrix.get(row, column) == digit) {
-                                possiblePlaces = 0;
-                                break duplicateInSubGridBreak;
-                            }
-
-                            if (matrix.isset(row, column)
-                                    || matrix.digitInRow(row, digit)
-                                    || matrix.digitInColumn(column, digit)) {
-                                continue;
-                            }
-
-                            possiblePlaces++;
-                        }
-                    }
-
-                    availableSubGridPlaces[i][j][digit] = possiblePlaces;
-                }
-            }
-        }
-
-        boolean canSelect = false;
-
-        selectBreak: for (int i = 0; i < SUB_GRIDS; i++) {
-            for (int j = 0; j < SUB_GRIDS; j++) {
-                for (int digit = 1; digit < NUMBERS; digit++) {
-                    if (availableSubGridPlaces[i][j][digit] > 0) {
-                        canSelect = true;
-                        break selectBreak;
-                    }
-                }
-            }
-        }
-
-        if (!canSelect) {
+        if (!matrix.canSelect()) {
             throw new CannotSelectException();
         }
 
-        for (int i = 0; i < SUB_GRIDS; i++) {
-            for (int j = 0; j < SUB_GRIDS; j++) {
-                for (int digit = 1; digit < NUMBERS; digit++) {
-
-                    if (availableSubGridPlaces[i][j][digit] == 1) {
-                        for (int row = i * 3; row < (i + 1) * 3; row++) {
-                            for (int column = j * 3; column < (j + 1) * 3; column++) {
-                                if (!matrix.isset(row, column)
-                                        && !matrix.digitInRow(row, digit)
-                                        && !matrix.digitInColumn(column, digit)) {
-                                    // TODO: Probably there should be a
-                                    // validation with some exception thrown:
-                                    // if(matrix[row][column].getValue() != 0) {
-                                    // ...
-                                    // }
-
-                                    matrix.set(row, column, digit);
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
+        matrix.fillRemainingDigitsInSubgrid();
     }
 
     // TODO: Shouldn't this method declare exception as manageSubGrids does?
     private void manageWholeGrid(Grid matrix) {
-        updateAvailableDigits(matrix);
-        fillRemainingDigits(matrix);
+        matrix.updateAvailableDigits();
+        matrix.fillRemainingDigits();
     }
 
-    private void updateAvailableDigits(Grid matrix) {
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                int possibleDigits = 0;
-
-                for (int digit = 1; digit < NUMBERS; digit++) {
-                    if (matrix.digitInRow(i, digit)
-                            || matrix.digitInColumn(j, digit)
-                            || matrix.digitInSubgrid(i, j, digit)) {
-                        continue;
-                    }
-
-                    possibleDigits++;
-                }
-
-                availableGridCellDigits[i][j] = possibleDigits;
-            }
-        }
-    }
-
-    private void fillRemainingDigits(Grid matrix) {
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                if (availableGridCellDigits[i][j] == 1) {
-                    for (int digit = 1; digit < NUMBERS; digit++) {
-                        if (!matrix.isset(i, j) && !matrix.digitInRow(i, digit)
-                                && !matrix.digitInColumn(j, digit)
-                                && !matrix.digitInSubgrid(i, j, digit)) {
-                            // TODO: As above, probably there should be a
-                            // validation with some exception thrown:
-                            // if(matrix[row][column].getValue() != 0) {
-                            // ...
-                            // }
-
-                            matrix.set(i, j, digit);
-                        }
-                    }
-
-                }
-            }
-        }
-    }
-
-    private double calculateWeights() {
+    private double calculateWeights(Grid matrix) {
         double weightsSum = 0;
 
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                for (int k = 1; k < NUMBERS; k++) {
-                    weights[i][j][k] = pheromoneValue[i][j][k]
-                            * (10 - availableSubGridPlaces[i / 3][j / 3][k])
-                            * (10 - availableGridCellDigits[i / 3][j / 3]);
-                    weightsSum += weights[i][j][k];
+        for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
+                for (int k = 1; k < GridConstants.NUMBERS; k++) {
+                    weights[row][col][k] = pheromoneValue[row][col][k]
+                            * (GridConstants.NUMBERS - matrix.subGridPlaces(
+                                    row / 3, col / 3, k))
+                            * (GridConstants.NUMBERS - matrix.gridCellDigits(
+                                    row / 3, col / 3));
+                    weightsSum += weights[row][col][k];
                 }
             }
         }
@@ -307,13 +190,14 @@ public class AlgorithmCore {
         return weightsSum;
     }
 
-    private void calculateProbability() {
-        double weightsSum = calculateWeights();
+    private void calculateProbability(Grid matrix) {
+        double weightsSum = calculateWeights(matrix);
 
-        for (int i = 0; i < Grid.GRID_SIZE; i++) {
-            for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                for (int k = 1; k < NUMBERS; k++) {
-                    probability[i][j][k] = weights[i][j][k] / weightsSum;
+        for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
+                for (int k = 1; k < GridConstants.NUMBERS; k++) {
+                    probability[row][col][k] = weights[row][col][k]
+                            / weightsSum;
                 }
             }
         }
