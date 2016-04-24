@@ -44,10 +44,10 @@ public class AlgorithmCore {
     private void initializePheromones() {
         pheromoneValue = new double[GridConstants.GRID_SIZE][GridConstants.GRID_SIZE][GridConstants.NUMBERS];
 
-        for (int i = 0; i < GridConstants.GRID_SIZE; i++) {
-            for (int j = 0; j < GridConstants.GRID_SIZE; j++) {
+        for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
                 for (int k = 0; k < GridConstants.NUMBERS; k++) {
-                    pheromoneValue[i][j][k] = PHEROMONES_MAX;
+                    pheromoneValue[row][col][k] = PHEROMONES_MAX;
                 }
             }
         }
@@ -79,17 +79,17 @@ public class AlgorithmCore {
 
                 // TODO: Not sure if it is correct.
                 double p = randomGenerator.nextDouble();
-                for (int i = 0; i < GridConstants.GRID_SIZE; i++) {
-                    for (int j = 0; j < GridConstants.GRID_SIZE; j++) {
-                        if (tmp.isset(i, j)) {
+                for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
+                    for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
+                        if (tmp.isset(row, col)) {
                             continue;
                         }
 
                         double probabilitiesSum = 0;
                         for (int k = 1; k < GridConstants.NUMBERS; k++) {
-                            probabilitiesSum += probability[i][j][k];
+                            probabilitiesSum += probability[row][col][k];
                             if (probabilitiesSum > p) {
-                                tmp.set(i, j, k);
+                                tmp.set(row, col, k);
 
                                 // TODO: Should we now check, whether this
                                 // selection hasn't caused a conflict with
