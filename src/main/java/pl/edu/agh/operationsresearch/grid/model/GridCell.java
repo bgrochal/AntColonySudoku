@@ -1,7 +1,5 @@
 package pl.edu.agh.operationsresearch.grid.model;
 
-import java.io.IOException;
-
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,11 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
 import pl.edu.agh.operationsresearch.grid.controller.NewValuePopupController;
+
+import java.io.IOException;
 
 public class GridCell extends StackPane implements EventHandler<MouseEvent> {
 
@@ -48,7 +49,46 @@ public class GridCell extends StackPane implements EventHandler<MouseEvent> {
             this.value.setText("");
         } else {
             this.value.setText(String.valueOf(value));
+            this.value.setFill(selectFontColor());
         }
+    }
+
+    private Paint selectFontColor() {
+        Paint paint;
+
+        switch(this.value.getText()) {
+            case "1":
+                paint = Paint.valueOf("LIMEGREEN");
+                break;
+            case "2":
+                paint = Paint.valueOf("DARKTURQUOISE");
+                break;
+            case "3":
+                paint = Paint.valueOf("PERU");
+                break;
+            case "4":
+                paint = Paint.valueOf("PURPLE");
+                break;
+            case "5":
+                paint = Paint.valueOf("DEEPPINK");
+                break;
+            case "6":
+                paint = Paint.valueOf("BLUE");
+                break;
+            case "7":
+                paint = Paint.valueOf("CRIMSON");
+                break;
+            case "8":
+                paint = Paint.valueOf("DARKGREEN");
+                break;
+            case "9":
+                paint = Paint.valueOf("DIMGRAY");
+                break;
+            default:
+                paint = Paint.valueOf("BLACK");
+        }
+
+        return paint;
     }
 
     public void handle(MouseEvent event) {
