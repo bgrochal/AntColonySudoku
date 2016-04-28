@@ -19,6 +19,12 @@ public class AlgorithmController {
 
     @FXML
     private ValidatedTextField evaporationTextField;
+
+    @FXML
+    private ValidatedTextField cyclesTextField;
+
+    @FXML
+    private ValidatedTextField pheromonesTextField;
     
     private GridController gridCtrl;
 
@@ -30,6 +36,8 @@ public class AlgorithmController {
         if(grid != null){    
             antsTextField.setText("100");
             evaporationTextField.setText("0.9");
+            cyclesTextField.setText("1000");
+            pheromonesTextField.setText("1000");
             gridCtrl.setGrid(grid);
         }
     }
@@ -43,18 +51,22 @@ public class AlgorithmController {
     @FXML
     private void startAlgorithm(ActionEvent actionEvent) {
         int antsNumber = 0;
+        int pheromones = 0;
+        int cycles = 0;
         double evaporationRate = 0;
         boolean valid = true;
 
         try {
             antsNumber = getAntsNumber();
             evaporationRate = getEvaporationRate();
+            pheromones = getMaxPheromones();
+            cycles = getCyclesNumber();
         } catch (InvalidTextFieldException e) {
             valid = false;
         }
 
         if (valid) {
-            new AlgorithmCore(evaporationRate, antsNumber, gridCtrl);
+            new AlgorithmCore(evaporationRate, antsNumber, pheromones, cycles, gridCtrl);
         }
     }
     
@@ -91,6 +103,38 @@ public class AlgorithmController {
         }
 
         return evaporationRate;
+    }
+
+    private int getCyclesNumber() throws InvalidTextFieldException {
+        int cyclesNumber;
+
+        try {
+            cyclesNumber = Integer.parseInt(cyclesTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidTextFieldException(cyclesTextField);
+        }
+
+        if (cyclesNumber <= 0) {
+            throw new InvalidTextFieldException(cyclesTextField);
+        }
+
+        return cyclesNumber;
+    }
+
+    private int getMaxPheromones() throws InvalidTextFieldException {
+        int pheromones;
+
+        try {
+            pheromones = Integer.parseInt(pheromonesTextField.getText());
+        } catch (NumberFormatException e) {
+            throw new InvalidTextFieldException(pheromonesTextField);
+        }
+
+        if (pheromones <= 0) {
+            throw new InvalidTextFieldException(pheromonesTextField);
+        }
+
+        return pheromones;
     }
 
 }

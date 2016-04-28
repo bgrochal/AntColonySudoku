@@ -6,13 +6,13 @@ import pl.edu.agh.operationsresearch.algorithm.utils.CannotSelectException;
 import pl.edu.agh.operationsresearch.grid.controller.GridController;
 import pl.edu.agh.operationsresearch.grid.model.Grid;
 import pl.edu.agh.operationsresearch.grid.model.GridConstants;
+import pl.edu.agh.operationsresearch.utils.view.AlertDialog;
 
 public class AlgorithmCore {
-    private static final int PHEROMONES_MAX = 1000;
-    private static final int CYCLES_NUMBER = 1000;
-
     private double evaporationRate;
     private int antsNumber;
+    private int pheromonesMax;
+    private int cyclesNumber;
 
     private Random randomGenerator;
 
@@ -23,11 +23,16 @@ public class AlgorithmCore {
 
     private GridController gridCtrl;
     private Grid result;
+    
+    private int lowestCycleNumber;
 
-    public AlgorithmCore(double evaporationRate, int antsNumber,
+    public AlgorithmCore(double evaporationRate, int antsNumber, int pheromonesMax, int cyclesNumber,
             GridController gridCtrl) {
         this.evaporationRate = evaporationRate;
         this.antsNumber = antsNumber;
+        this.pheromonesMax = pheromonesMax;
+        this.cyclesNumber = cyclesNumber;
+        this.lowestCycleNumber = cyclesNumber;
         this.gridCtrl = gridCtrl;
 
         initialize();
@@ -47,7 +52,7 @@ public class AlgorithmCore {
         for (int row = 0; row < GridConstants.GRID_SIZE; row++) {
             for (int col = 0; col < GridConstants.GRID_SIZE; col++) {
                 for (int k = 0; k < GridConstants.NUMBERS; k++) {
-                    pheromoneValue[row][col][k] = PHEROMONES_MAX;
+                    pheromoneValue[row][col][k] = pheromonesMax;
                 }
             }
         }
@@ -58,7 +63,7 @@ public class AlgorithmCore {
         weights = new double[GridConstants.GRID_SIZE][GridConstants.GRID_SIZE][GridConstants.NUMBERS];
     }
 
-    private void singleCycle(Grid best) {
+    private boolean singleCycle(Grid best, int cycle) {
         boolean canSelect;
 
         Grid tmp = new Grid();
@@ -103,6 +108,10 @@ public class AlgorithmCore {
 
                 if (tmp.selected() == 81) {
                     canSelect = false;
+                    
+                    if(cycle < lowestCycleNumber){
+                        lowestCycleNumber = cycle;
+                    }
                 }
             }
 
@@ -116,7 +125,13 @@ public class AlgorithmCore {
 
         if (best.selected() > result.selected()) {
             result.set(best.values());
+            
+            if(result.selected() == 81){
+                return true;
+            }
         }
+        
+        return false;
     }
 
     private void updatePheromones(Grid best) {
@@ -135,14 +150,21 @@ public class AlgorithmCore {
         Grid best = new Grid();
         result = gridCtrl.getGrid();
 
-        for (int cycle = 0; cycle < CYCLES_NUMBER; cycle++) {
-            System.out.println("Cycle " + cycle + ".");
-            singleCycle(best);
+        for (int cycle = 1; cycle <= cyclesNumber; cycle++) {
+            if(singleCycle(best, cycle)){
+                break;
+            }
         }
 
-        System.out.println("Finished.");
-
         gridCtrl.setGrid(result);
+        
+        int selected = result.selected();
+        
+        if(selected == 81){
+            new AlertDialog("Results", "Algorithm succedeed!", "Solution found in " + lowestCycleNumber + "/" + cyclesNumber + " cycles.");
+        } else {
+            new AlertDialog("Results", "Algorithm failed!", "Filled:\t" + selected + "\nMissing:\t" + (81-selected));
+        }
     }
 
     private void evaporatePheromones() {

@@ -28,6 +28,20 @@
             </GridPane>
         </HBox>
 
+        <HBox>
+            <GridPane>
+                <Label minWidth="120" text="Max pheromones:" GridPane.columnIndex="0"/>
+                <ValidatedTextField fx:id="pheromonesTextField" minWidth="130" GridPane.columnIndex="1"/>
+            </GridPane>
+        </HBox>
+
+        <HBox>
+            <GridPane>
+                <Label minWidth="120" text="Cycles number:" GridPane.columnIndex="0"/>
+                <ValidatedTextField fx:id="cyclesTextField" minWidth="130" GridPane.columnIndex="1"/>
+            </GridPane>
+        </HBox>
+
         <Button text="Load!" minWidth="75" onAction="#loadTest"/>
         <Button text="Start!" minWidth="75" onAction="#startAlgorithm"/>
     </VBox>
