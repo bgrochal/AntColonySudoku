@@ -49,46 +49,13 @@ public class GridCell extends StackPane implements EventHandler<MouseEvent> {
             this.value.setText("");
         } else {
             this.value.setText(String.valueOf(value));
-            this.value.setFill(selectFontColor());
+            this.value.setFill(selectFontColor(value));
         }
     }
 
-    private Paint selectFontColor() {
-        Paint paint;
-
-        switch(this.value.getText()) {
-            case "1":
-                paint = Paint.valueOf("LIMEGREEN");
-                break;
-            case "2":
-                paint = Paint.valueOf("DARKTURQUOISE");
-                break;
-            case "3":
-                paint = Paint.valueOf("PERU");
-                break;
-            case "4":
-                paint = Paint.valueOf("PURPLE");
-                break;
-            case "5":
-                paint = Paint.valueOf("DEEPPINK");
-                break;
-            case "6":
-                paint = Paint.valueOf("BLUE");
-                break;
-            case "7":
-                paint = Paint.valueOf("CRIMSON");
-                break;
-            case "8":
-                paint = Paint.valueOf("DARKGREEN");
-                break;
-            case "9":
-                paint = Paint.valueOf("DIMGRAY");
-                break;
-            default:
-                paint = Paint.valueOf("BLACK");
-        }
-
-        return paint;
+    private Paint selectFontColor(int value) {
+        String colors[] = {"BLACK", "LIMEGREEN", "DARKTURQUOISE", "PERU", "PURPLE", "DEEPPINK", "BLUE", "CRIMSON", "DARKGREEN", "DIMGRAY"};
+        return Paint.valueOf(colors[value]);
     }
 
     public void handle(MouseEvent event) {
