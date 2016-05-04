@@ -25,6 +25,7 @@ public class AlgorithmCore {
     private Grid result;
     
     private int lowestCycleNumber;
+    private long algorithmStartTime;
 
     public AlgorithmCore(double evaporationRate, int antsNumber, int pheromonesMax, int cyclesNumber,
             GridController gridCtrl) {
@@ -34,6 +35,7 @@ public class AlgorithmCore {
         this.cyclesNumber = cyclesNumber;
         this.lowestCycleNumber = cyclesNumber;
         this.gridCtrl = gridCtrl;
+        algorithmStartTime = System.currentTimeMillis();
 
         initialize();
         cycleLoop();
@@ -159,11 +161,12 @@ public class AlgorithmCore {
         gridCtrl.setGrid(result);
         
         int selected = result.selected();
+        long algorithmExecutionTime = System.currentTimeMillis() - algorithmStartTime;
         
         if(selected == 81){
-            new AlertDialog("Results", "Algorithm succedeed!", "Solution found in " + lowestCycleNumber + "/" + cyclesNumber + " cycles.");
+            new AlertDialog("Results", "Algorithm succedeed!", "Solution found in " + lowestCycleNumber + "/" + cyclesNumber + " cycles.\nTime of execution: " + algorithmExecutionTime + " ms.");
         } else {
-            new AlertDialog("Results", "Algorithm failed!", "Filled:\t" + selected + "\nMissing:\t" + (81-selected));
+            new AlertDialog("Results", "Algorithm failed!", "Filled:\t" + selected + "\nMissing:\t" + (81-selected) + ".\nTime of execution: " + algorithmExecutionTime + " ms.");
         }
     }
 
